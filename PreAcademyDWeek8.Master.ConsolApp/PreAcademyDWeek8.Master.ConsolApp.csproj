@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PreAcademyDWeek8.Master.Core\PreAcademyDWeek8.Master.Core.csproj" />
+    <ProjectReference Include="..\PreAcademyDWeek8.Master.RepositoryADO\PreAcademyDWeek8.Master.RepositoryADO.csproj" />
+    <ProjectReference Include="..\PreAcademyDWeek8.Master.RepositoryMock\PreAcademyDWeek8.Master.RepositoryMock.csproj" />
+  </ItemGroup>
+
+</Project>
