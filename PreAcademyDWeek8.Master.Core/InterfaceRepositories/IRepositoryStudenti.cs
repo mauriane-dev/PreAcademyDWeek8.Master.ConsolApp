@@ -9,6 +9,6 @@ namespace PreAcademyDWeek8.Master.Core.InterfaceRepositories
 {
     public interface IRepositoryStudenti: IRepository<Studente>
     {
-
+        public Studente GetById(int id);
     }
 }

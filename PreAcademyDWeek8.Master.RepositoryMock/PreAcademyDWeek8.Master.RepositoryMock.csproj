@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PreAcademyDWeek8.Master.Core\PreAcademyDWeek8.Master.Core.csproj" />
   </ItemGroup>
 

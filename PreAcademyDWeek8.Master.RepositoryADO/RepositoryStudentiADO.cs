@@ -10,26 +10,27 @@ using System.Threading.Tasks;
 
 namespace PreAcademyDWeek8.Master.RepositoryADO
 {
-    public class RepositoryCorsiADO : IRepositoryCorsi
+    public class RepositoryStudentiADO : IRepositoryStudenti
     {
         string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CorsiMaster;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
-        public Corso Add(Corso item)
+        public Studente Add(Studente item)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-
                     SqlCommand command = new SqlCommand();
                     command.Connection = connection;
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = "insert into Corso values(@codice, @nome, @descrizione)";
+                    command.CommandType = CommandType.Text;
+                    command.CommandText = "insert into Studente values(@nome, @cognome, @email, @titoloStudio,@datadNascita, @corsoCodice)";
                     command.Parameters.AddWithValue("@nome", item.Nome);
-                    command.Parameters.AddWithValue("@descrizione", item.Descrizione);
-                    command.Parameters.AddWithValue("@codice", item.CorsoCodice);
-
+                    command.Parameters.AddWithValue("@cognome", item.Cognome);
+                    command.Parameters.AddWithValue("@email", item.Email);
+                    command.Parameters.AddWithValue("@titoloStudio", item.TitoloStudio);
+                    command.Parameters.AddWithValue("@datadNascita", item.DataNascita);
+                    command.Parameters.AddWithValue("@corsoCodice", item.CorsoCodice);
 
                     int numRighe = command.ExecuteNonQuery();
                     if (numRighe == 1)
@@ -48,7 +49,7 @@ namespace PreAcademyDWeek8.Master.RepositoryADO
             }
         }
 
-        public bool Delete(Corso item)
+        public bool Delete(Studente item)
         {
             try
             {
@@ -58,8 +59,8 @@ namespace PreAcademyDWeek8.Master.RepositoryADO
                     SqlCommand command = new SqlCommand();
                     command.Connection = connection;
                     command.CommandType = CommandType.Text;
-                    command.CommandText = "delete Corso where CorsoCodice=@codice";
-                    command.Parameters.AddWithValue("@codice", item.CorsoCodice);
+                    command.CommandText = "delete Studente where ID=@idStudente";
+                    command.Parameters.AddWithValue("@idStudente", item.ID);
                     int rigaEliminata = command.ExecuteNonQuery();
                     if (rigaEliminata == 1)
                     {
@@ -82,47 +83,7 @@ namespace PreAcademyDWeek8.Master.RepositoryADO
             }
         }
 
-        public List<Corso> GetAll()
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    SqlCommand command = new SqlCommand();
-                    command.Connection = connection;
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = "select * from Corso";
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    List<Corso> corsi = new List<Corso>();
-
-                    while (reader.Read())
-                    {
-                        var codice = (string)reader["CorsoCodice"];
-                        var nome = (string)reader["Nome"];
-                        var descrizione = (string)reader["Descrizione"];
-                        Corso c = new Corso();
-                        c.CorsoCodice = codice;
-                        c.Nome = nome;
-                        c.Descrizione = descrizione;
-                        corsi.Add(c);
-                    }
-                    connection.Close();
-
-                    return corsi;
-                }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine(ex.Message);
-                return new List<Corso>();
-            }
-        }
-
-        public Corso GetByCode(string codice)
+        public List<Studente> GetAll()
         {
             try
             {
@@ -133,22 +94,81 @@ namespace PreAcademyDWeek8.Master.RepositoryADO
                     SqlCommand command = new SqlCommand();
                     command.Connection = connection;
                     command.CommandType = CommandType.Text;
-                    command.CommandText = "select * from Corso where CorsoCodice=@Codice";
-                    command.Parameters.AddWithValue("@Codice", codice);
+                    command.CommandText = "select * from Studente";
+
                     SqlDataReader reader = command.ExecuteReader();
-                    Corso c = null;
+
+                    List<Studente> studenti = new List<Studente>();
+                    
                     while (reader.Read())
                     {
-                        //var codice = (string)reader["CorsoCodice"];
+                        var id = (int)reader["ID"];
                         var nome = (string)reader["Nome"];
-                        var descrizione = (string)reader["Descrizione"];
-                        c = new Corso();
-                        c.CorsoCodice = codice;
-                        c.Nome = nome;
-                        c.Descrizione = descrizione;
+                        var cognome = (string)reader["Cognome"];
+                        var email = (string)reader["Email"];
+                        var titolo = (string)reader["TitoloStudio"];
+                        var dataNascita = (DateTime)reader["DataNascita"];
+                        var corsoCod = (string)reader["CorsoCodice"];
+
+                        var s = new Studente();
+                        s.ID = id;
+                        s.Nome = nome;
+                        s.Cognome = cognome;
+                        s.Email = email;
+                        s.DataNascita = dataNascita;
+                        s.TitoloStudio = titolo;
+                        s.CorsoCodice = corsoCod;
+                        
+                        studenti.Add(s);
                     }
                     connection.Close();
-                    return c;
+
+                    return studenti;
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<Studente>();
+            }
+        }
+
+        public Studente GetById(int id)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    SqlCommand command = new SqlCommand();
+                    command.Connection = connection;
+                    command.CommandType = CommandType.Text;
+                    command.CommandText = "select * from Studente where ID=@id";
+                    command.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = command.ExecuteReader();
+                    Studente s = null;
+
+                    while (reader.Read())
+                    {
+                        //var id = (int)reader["ID"];
+                        var nome = (string)reader["Nome"];
+                        var cognome = (string)reader["Cognome"];
+                        var email = (string)reader["Email"];
+                        var titolo = (string)reader["TitoloStudio"];
+                        var dataNascita = (DateTime)reader["DataNascita"];
+                        var corsoCod = (string)reader["CorsoCodice"];
+                        s = new Studente();
+                        s.ID = id;
+                        s.Nome = nome;
+                        s.Cognome = cognome;
+                        s.Email = email;
+                        s.DataNascita = dataNascita;
+                        s.TitoloStudio = titolo;
+                        s.CorsoCodice = corsoCod;
+                    }
+                    connection.Close();
+                    return s;
                 }
             }
             catch (SqlException ex)
@@ -158,7 +178,7 @@ namespace PreAcademyDWeek8.Master.RepositoryADO
             }
         }
 
-        public Corso Update(Corso item)
+        public Studente Update(Studente item)
         {
             try
             {
@@ -168,31 +188,32 @@ namespace PreAcademyDWeek8.Master.RepositoryADO
                     SqlCommand command = new SqlCommand();
                     command.Connection = connection;
                     command.CommandType = CommandType.Text;
-                    command.CommandText = "update Corso set Nome=@nome, Descrizione=@descr where CorsoCodice=@codice";
-                    command.Parameters.AddWithValue("@codice", item.CorsoCodice);
-                    command.Parameters.AddWithValue("@nome", item.Nome);
-                    command.Parameters.AddWithValue("@descr", item.Descrizione);
+                    command.CommandText = "update Studente set email=@mailnuova where ID=@id";
+                    command.Parameters.AddWithValue("@mailnuova", item.Email);
+                    command.Parameters.AddWithValue("@id", item.ID);
+                    
 
                     int rigaAggiornata = command.ExecuteNonQuery();
                     if (rigaAggiornata == 1)
                     {
                         connection.Close();
                         return item;
-                        
+
                     }
                     else
                     {
                         connection.Close();
                         return null;
-                        
+
                     }
                 }
             }
             catch (SqlException ex)
             {
                 Console.WriteLine(ex.Message);
-                return null;
+                return new Studente();
             }
         }
     }
 }
+  
